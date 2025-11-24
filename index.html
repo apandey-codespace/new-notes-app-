@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NoteSpace</title>
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Global Styles */
@@ -45,6 +47,7 @@
             overflow: hidden;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             touch-action: manipulation;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .app-container {
@@ -56,6 +59,7 @@
             overflow: hidden;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
             background-color: var(--background);
+            transition: background-color 0.3s ease;
         }
 
         .page {
@@ -68,7 +72,7 @@
             display: none;
             flex-direction: column;
             background-color: var(--background);
-            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
             overflow: hidden;
         }
 
@@ -78,8 +82,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Button Styles - Mobile Optimized */
@@ -132,6 +143,62 @@
             box-shadow: var(--shadow);
         }
 
+        /* Theme Toggle Button - Only on Home Page */
+        .theme-toggle {
+            position: absolute;
+            top: 16px;
+            right: 80px;
+            z-index: 100;
+            background: var(--card);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            color: var(--text);
+        }
+
+        #home-page .theme-toggle {
+            display: flex;
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.9);
+        }
+
+        /* Home Button - On all pages except home */
+        .home-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+            background: var(--card);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            color: var(--text);
+        }
+
+        .page:not(#home-page) .home-btn {
+            display: flex;
+        }
+
+        .home-btn:active {
+            transform: scale(0.9);
+        }
+
         /* Loading Page */
         #loading-page {
             display: flex;
@@ -172,19 +239,45 @@
             animation: bubble 1.5s infinite ease-in-out;
         }
 
-        .bubble:nth-child(1) { animation-delay: 0s; }
-        .bubble:nth-child(2) { animation-delay: 0.2s; }
-        .bubble:nth-child(3) { animation-delay: 0.4s; }
+        .bubble:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .bubble:nth-child(3) {
+            animation-delay: 0.4s;
+        }
 
         @keyframes bubble {
-            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-            40% { transform: scale(1); opacity: 1; }
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         /* Welcome Page */
@@ -256,6 +349,7 @@
             padding-bottom: 12px;
             border-bottom: 2px solid var(--secondary);
             min-height: 52px;
+            position: relative;
         }
 
         .page-title {
@@ -319,13 +413,29 @@
             word-break: break-word;
         }
 
-        .note-date {
+        .note-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
             font-size: 0.75rem;
             color: var(--text-lighter);
-            margin-top: 10px;
+        }
+
+        .note-date {
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+
+        .note-folder {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background-color: var(--secondary);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 600;
         }
 
         /* Folder Badge in Notes */
@@ -339,7 +449,7 @@
             font-size: 0.7rem;
             color: var(--text);
             font-weight: 700;
-            margin-top: 8px;
+            white-space: nowrap;
         }
 
         .empty-state {
@@ -403,6 +513,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
         }
 
         .folder-item:active {
@@ -438,6 +549,45 @@
         .folder-count {
             font-size: 0.7rem;
             color: var(--text-lighter);
+        }
+
+        /* Folder Notes Page */
+        .folder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--secondary);
+            min-height: 52px;
+        }
+
+        .folder-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .folder-action-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 10px 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--secondary);
+            touch-action: manipulation;
+            font-weight: 700;
+        }
+
+        .folder-action-btn:active {
+            background-color: #e74c3c;
+            color: white;
+            transform: scale(0.95);
         }
 
         /* Notes Page */
@@ -531,7 +681,8 @@
             font-size: 1rem;
         }
 
-        .form-input, .form-textarea {
+        .form-input,
+        .form-textarea {
             width: 100%;
             padding: 14px;
             border: 2px solid var(--secondary);
@@ -544,7 +695,8 @@
             touch-action: manipulation;
         }
 
-        .form-input:focus, .form-textarea:focus {
+        .form-input:focus,
+        .form-textarea:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
@@ -713,8 +865,15 @@
         }
 
         @keyframes modalSlideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
@@ -796,6 +955,48 @@
             gap: 12px;
         }
 
+        /* Folder Name Modal */
+        .folder-name-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 16px;
+        }
+
+        .folder-name-modal.active {
+            display: flex;
+        }
+
+        .folder-name-modal .modal {
+            max-width: 320px;
+        }
+
+        .folder-name-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            background-color: var(--card);
+            font-size: 1rem;
+            color: var(--text);
+            transition: var(--transition);
+            font-family: 'Comic Neue', cursive;
+            margin-bottom: 16px;
+        }
+
+        .folder-name-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
         /* Toast notifications */
         .toast {
             position: fixed;
@@ -822,8 +1023,15 @@
         }
 
         @keyframes slideUp {
-            from { transform: translate(-50%, 20px); opacity: 0; }
-            to { transform: translate(-50%, 0); opacity: 1; }
+            from {
+                transform: translate(-50%, 20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
         }
 
         /* Add Folder Button */
@@ -874,22 +1082,22 @@
             .page {
                 padding: 12px;
             }
-            
+
             .page-header {
                 margin-bottom: 12px;
                 min-height: 48px;
             }
-            
+
             .note-item {
                 padding: 12px;
                 margin-bottom: 10px;
             }
-            
+
             .floating-buttons {
                 bottom: 16px;
                 right: 16px;
             }
-            
+
             .folder-cards {
                 grid-template-columns: repeat(6, 1fr);
             }
@@ -901,20 +1109,31 @@
                 grid-template-columns: repeat(3, 1fr);
                 gap: 8px;
             }
-            
+
             .folder-card {
                 padding: 10px 4px;
                 min-height: 70px;
             }
-            
+
             .folder-card-name {
                 font-size: 0.65rem;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="app-container">
+        <!-- Theme Toggle Button - Only visible on Home Page -->
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+        </button>
+
+        <!-- Home Button - On all pages except home -->
+        <button class="home-btn" id="home-btn" aria-label="Go to Home">
+            <i class="fas fa-home"></i>
+        </button>
+
         <!-- Loading Page -->
         <div id="loading-page" class="page active will-change">
             <div class="app-icon">
@@ -935,7 +1154,8 @@
                 </div>
                 <h1 class="app-name">NoteSpace</h1>
             </div>
-            <p class="welcome-message">Your playful space for notes and ideas. Organize, create, and remember with style!</p>
+            <p class="welcome-message">Your playful space for notes and ideas. Organize, create, and remember with
+                style!</p>
             <div class="button-group">
                 <button class="btn btn-primary" id="open-folders-btn">
                     <i class="fas fa-folder-open"></i> Open Folders
@@ -943,24 +1163,27 @@
                 <button class="btn btn-accent" id="new-note-btn">
                     <i class="fas fa-plus"></i> New Note
                 </button>
+                <button class="btn btn-secondary" id="go-home-btn">
+                    <i class="fas fa-home"></i> Go to Home
+                </button>
             </div>
         </div>
 
-        <!-- Home Page -->
+        <!-- Home Page (All Notes) -->
         <div id="home-page" class="page">
             <div class="page-header">
                 <h2 class="page-title">
-                    <i class="fas fa-home"></i> All Notes
+                    <i class="fas fa-sticky-note"></i> All Notes
                 </h2>
                 <button class="btn btn-icon" id="folders-btn" aria-label="Open Folders">
                     <i class="fas fa-folder"></i>
                 </button>
             </div>
-            
+
             <div class="notes-list" id="home-notes-list">
                 <!-- Notes will be dynamically added here -->
             </div>
-            
+
             <div class="floating-buttons">
                 <button class="btn btn-accent btn-icon" id="add-note-btn" aria-label="Add New Note">
                     <i class="fas fa-plus"></i>
@@ -979,7 +1202,7 @@
                 </h2>
                 <div></div>
             </div>
-            
+
             <div class="folders-grid" id="folders-grid">
                 <!-- Folders will be dynamically added here -->
             </div>
@@ -987,20 +1210,25 @@
 
         <!-- Folder Notes Page -->
         <div id="folder-notes-page" class="page">
-            <div class="page-header">
+            <div class="folder-header">
                 <button class="back-btn" id="back-from-folder-notes">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
                 <h2 class="page-title" id="folder-notes-title">
                     <i class="fas fa-folder-open"></i> Folder Name
                 </h2>
-                <div></div>
+                <div class="folder-actions">
+                    <button class="folder-action-btn" id="delete-folder-btn" title="Delete Folder"
+                        aria-label="Delete Folder">
+                        <i class="fas fa-trash"></i> Delete Folder
+                    </button>
+                </div>
             </div>
-            
+
             <div class="notes-list" id="folder-notes-list">
                 <!-- Folder notes will be dynamically added here -->
             </div>
-            
+
             <div class="floating-buttons">
                 <button class="btn btn-accent btn-icon" id="add-note-to-folder-btn" aria-label="Add Note to Folder">
                     <i class="fas fa-plus"></i>
@@ -1026,7 +1254,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <div class="note-content" id="note-content-view">
                 <!-- Note content will be displayed here -->
             </div>
@@ -1043,23 +1271,25 @@
                 </h2>
                 <button class="btn btn-accent" id="save-note-btn">Save</button>
             </div>
-            
+
             <form class="note-form">
                 <div class="form-group">
                     <label class="form-label" for="note-title">Title</label>
-                    <input type="text" id="note-title" class="form-input" placeholder="Note title" maxlength="100" aria-required="true">
+                    <input type="text" id="note-title" class="form-input" placeholder="Note title" maxlength="100"
+                        aria-required="true">
                 </div>
-                
+
                 <div class="form-group folder-selection">
                     <label class="form-label">Select Folder</label>
                     <div class="folder-cards" id="folder-cards">
                         <!-- Folder cards will be dynamically added here -->
                     </div>
                 </div>
-                
+
                 <div class="form-group" style="flex: 1; display: flex; flex-direction: column;">
                     <label class="form-label" for="note-content">Content</label>
-                    <textarea id="note-content" class="form-textarea" placeholder="Start typing your note here..." maxlength="10000" aria-required="true"></textarea>
+                    <textarea id="note-content" class="form-textarea" placeholder="Start typing your note here..."
+                        maxlength="10000" aria-required="true"></textarea>
                     <div class="word-count" id="word-count">0/10000 characters</div>
                 </div>
             </form>
@@ -1080,7 +1310,25 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="cancel-icon-selection">Cancel</button>
-                <button class="btn btn-accent" id="confirm-icon-selection">Confirm</button>
+                <button class="btn btn-accent" id="confirm-icon-selection">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Folder Name Modal -->
+    <div class="folder-name-modal" id="folder-name-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Enter Folder Name</h3>
+                <button class="close-modal" id="close-folder-name-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <input type="text" id="folder-name-input" class="folder-name-input" placeholder="Folder name"
+                maxlength="20">
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-folder-name">Cancel</button>
+                <button class="btn btn-accent" id="confirm-folder-name">Create Folder</button>
             </div>
         </div>
     </div>
@@ -1140,6 +1388,7 @@
         let selectedIcon = 'fa-folder';
         let notes = JSON.parse(localStorage.getItem('noteSpaceNotes')) || sampleNotes;
         let folders = JSON.parse(localStorage.getItem('noteSpaceFolders')) || sampleFolders;
+        let isDarkMode = localStorage.getItem('noteSpaceDarkMode') === 'true';
 
         // DOM Elements
         const pages = document.querySelectorAll('.page');
@@ -1151,11 +1400,17 @@
         const noteViewPage = document.getElementById('note-view-page');
         const noteEditPage = document.getElementById('note-edit-page');
         const iconPickerModal = document.getElementById('icon-picker-modal');
+        const folderNameModal = document.getElementById('folder-name-modal');
         const iconGrid = document.getElementById('icon-grid');
         const toast = document.getElementById('toast');
+        const themeToggle = document.getElementById('theme-toggle');
+        const homeBtn = document.getElementById('home-btn');
 
         // Initialize the app
         function initApp() {
+            // Apply theme
+            applyTheme();
+
             // Populate icon grid
             populateIconGrid();
 
@@ -1166,58 +1421,96 @@
 
             // Set up event listeners
             setupEventListeners();
-            
+
             // Update note counts in folders
             updateFolderNoteCounts();
-            
+
             // Render initial data
             renderHomeNotes();
             renderFolders();
             renderFolderCards();
         }
 
+        // Apply theme based on user preference
+        function applyTheme() {
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('noteSpaceDarkMode', isDarkMode);
+            applyTheme();
+        }
+
         // Set up all event listeners
         function setupEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleDarkMode);
+
+            // Home button
+            homeBtn.addEventListener('click', () => showPage('home'));
+
             // Welcome page buttons
             document.getElementById('open-folders-btn').addEventListener('click', () => showPage('folders'));
             document.getElementById('new-note-btn').addEventListener('click', () => showCreateNotePage());
-            
+            document.getElementById('go-home-btn').addEventListener('click', () => showPage('home'));
+
             // Home page buttons
             document.getElementById('folders-btn').addEventListener('click', () => showPage('folders'));
             document.getElementById('add-note-btn').addEventListener('click', () => showCreateNotePage());
-            
+
             // Folders page buttons
             document.getElementById('back-from-folders').addEventListener('click', () => showPage('home'));
-            
+
             // Folder notes page buttons
             document.getElementById('back-from-folder-notes').addEventListener('click', () => showPage('folders'));
             document.getElementById('add-note-to-folder-btn').addEventListener('click', () => showCreateNotePage());
-            
+            document.getElementById('delete-folder-btn').addEventListener('click', handleDeleteFolder);
+
             // Note view page buttons
             document.getElementById('back-from-note-view').addEventListener('click', handleBackFromNoteView);
             document.getElementById('edit-note-btn').addEventListener('click', handleEditNote);
             document.getElementById('delete-note-btn').addEventListener('click', handleDeleteNote);
             document.getElementById('move-note-btn').addEventListener('click', handleMoveNote);
-            
+
             // Note edit page buttons
             document.getElementById('back-from-note-edit').addEventListener('click', handleBackFromNoteEdit);
             document.getElementById('save-note-btn').addEventListener('click', handleSaveNote);
-            
+
             // Folder grid items
             document.getElementById('folders-grid').addEventListener('click', handleFolderClick);
-            
+
             // Icon picker modal
             document.getElementById('close-icon-modal').addEventListener('click', closeIconPicker);
             document.getElementById('cancel-icon-selection').addEventListener('click', closeIconPicker);
-            document.getElementById('confirm-icon-selection').addEventListener('click', confirmIconSelection);
-            
+            document.getElementById('confirm-icon-selection').addEventListener('click', openFolderNameModal);
+
+            // Folder name modal
+            document.getElementById('close-folder-name-modal').addEventListener('click', closeFolderNameModal);
+            document.getElementById('cancel-folder-name').addEventListener('click', closeFolderNameModal);
+            document.getElementById('confirm-folder-name').addEventListener('click', confirmFolderCreation);
+
             // Character count for note content
             document.getElementById('note-content').addEventListener('input', updateCharCount);
-            
+
             // Prevent form submission on Enter key in title field
             document.getElementById('note-title').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
+                }
+            });
+
+            // Enter key for folder name input
+            document.getElementById('folder-name-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    confirmFolderCreation();
                 }
             });
         }
@@ -1240,7 +1533,7 @@
             document.querySelectorAll('.icon-option').forEach(iconEl => {
                 iconEl.classList.remove('selected');
             });
-            
+
             // Add selected class to clicked icon
             element.classList.add('selected');
             selectedIcon = icon;
@@ -1255,34 +1548,51 @@
         function closeIconPicker() {
             iconPickerModal.classList.remove('active');
             selectedIcon = 'fa-folder';
-            
+
             // Reset icon selection
             document.querySelectorAll('.icon-option').forEach(iconEl => {
                 iconEl.classList.remove('selected');
             });
         }
 
-        // Confirm icon selection and create folder
-        function confirmIconSelection() {
-            const folderName = prompt('Enter folder name:');
-            
-            if (!folderName || folderName.trim() === '') {
+        // Open folder name modal
+        function openFolderNameModal() {
+            if (!selectedIcon) {
+                showToast('Please select an icon first');
+                return;
+            }
+            closeIconPicker();
+            folderNameModal.classList.add('active');
+            document.getElementById('folder-name-input').focus();
+        }
+
+        // Close folder name modal
+        function closeFolderNameModal() {
+            folderNameModal.classList.remove('active');
+            document.getElementById('folder-name-input').value = '';
+        }
+
+        // Confirm folder creation
+        function confirmFolderCreation() {
+            const folderName = document.getElementById('folder-name-input').value.trim();
+
+            if (!folderName) {
                 showToast('Please enter a folder name');
                 return;
             }
-            
+
             const newFolder = {
                 id: folders.length > 0 ? Math.max(...folders.map(f => f.id)) + 1 : 1,
-                name: folderName.trim(),
+                name: folderName,
                 icon: selectedIcon,
                 color: getRandomColor()
             };
-            
+
             folders.push(newFolder);
             localStorage.setItem('noteSpaceFolders', JSON.stringify(folders));
             renderFolders();
             renderFolderCards();
-            closeIconPicker();
+            closeFolderNameModal();
             showToast('Folder created successfully!');
         }
 
@@ -1298,9 +1608,9 @@
             pages.forEach(page => {
                 page.classList.remove('active');
             });
-            
+
             // Show the requested page
-            switch(pageName) {
+            switch (pageName) {
                 case 'loading':
                     loadingPage.classList.add('active');
                     break;
@@ -1325,7 +1635,7 @@
                     renderFolderCards();
                     break;
             }
-            
+
             currentPage = pageName;
         }
 
@@ -1342,14 +1652,14 @@
         function showNoteView(noteId) {
             currentNoteId = noteId;
             const note = notes.find(n => n.id === noteId);
-            
+
             if (note) {
                 let folderInfo = '';
                 if (note.folderId) {
                     const folder = folders.find(f => f.id === note.folderId);
                     folderInfo = `<div class="folder-badge"><i class="fas ${folder.icon}"></i> ${folder.name}</div>`;
                 }
-                
+
                 document.getElementById('note-content-view').innerHTML = `
                     <h2>${note.title}</h2>
                     <div class="note-meta">
@@ -1359,7 +1669,7 @@
                     <div>${note.content}</div>
                 `;
             }
-            
+
             showPage('noteView');
         }
 
@@ -1367,9 +1677,9 @@
         function showCreateNotePage(noteId = null) {
             const isEditing = noteId !== null;
             currentNoteId = noteId;
-            
+
             document.getElementById('note-edit-title').innerHTML = `<i class="fas fa-edit"></i> ${isEditing ? 'Edit Note' : 'New Note'}`;
-            
+
             if (isEditing) {
                 const note = notes.find(n => n.id === noteId);
                 document.getElementById('note-title').value = note.title;
@@ -1380,11 +1690,11 @@
                 document.getElementById('note-content').value = '';
                 selectedFolderId = currentFolderId || null;
             }
-            
+
             updateCharCount();
             renderFolderCards();
             showPage('noteEdit');
-            
+
             // Focus on title field for better UX
             setTimeout(() => {
                 document.getElementById('note-title').focus();
@@ -1395,7 +1705,7 @@
         function renderFolderCards() {
             const folderCardsContainer = document.getElementById('folder-cards');
             folderCardsContainer.innerHTML = '';
-            
+
             // Add "No Folder" option
             const noFolderCard = document.createElement('div');
             noFolderCard.className = `folder-card no-folder-card ${selectedFolderId === null ? 'selected' : ''}`;
@@ -1407,7 +1717,7 @@
             `;
             noFolderCard.addEventListener('click', () => selectFolderCard(null, noFolderCard));
             folderCardsContainer.appendChild(noFolderCard);
-            
+
             // Add folder cards
             folders.forEach(folder => {
                 const folderCard = document.createElement('div');
@@ -1429,7 +1739,7 @@
             document.querySelectorAll('.folder-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            
+
             // Add selected class to clicked card
             element.classList.add('selected');
             selectedFolderId = folderId;
@@ -1438,7 +1748,7 @@
         // Render notes on home page
         function renderHomeNotes() {
             const homeNotesList = document.getElementById('home-notes-list');
-            
+
             if (notes.length === 0) {
                 homeNotesList.innerHTML = `
                     <div class="empty-state">
@@ -1449,33 +1759,37 @@
                 `;
                 return;
             }
-            
+
             // Sort notes by update date (newest first)
             const sortedNotes = [...notes].sort((a, b) => new Date(b.updated) - new Date(a.updated));
-            
+
             homeNotesList.innerHTML = sortedNotes.map(note => {
-                let folderBadge = '';
+                let folderInfo = '';
                 if (note.folderId) {
                     const folder = folders.find(f => f.id === note.folderId);
                     if (folder) {
-                        folderBadge = `<div class="note-folder-badge"><i class="fas ${folder.icon}"></i> ${folder.name}</div>`;
+                        folderInfo = `<div class="note-folder"><i class="fas ${folder.icon}"></i> ${folder.name}</div>`;
                     }
+                } else {
+                    folderInfo = `<div class="note-folder"><i class="fas fa-times"></i> No Folder</div>`;
                 }
-                
+
                 return `
                 <div class="note-item" data-note-id="${note.id}" tabindex="0" role="button" aria-label="View note: ${note.title}">
                     <div class="note-title">
                         <i class="fas fa-sticky-note"></i> ${note.title}
                     </div>
                     <div class="note-preview">${note.content.substring(0, 100)}${note.content.length > 100 ? '...' : ''}</div>
-                    ${folderBadge}
-                    <div class="note-date">
-                        <i class="far fa-calendar"></i> ${formatDate(note.date)}
+                    <div class="note-meta">
+                        <div class="note-date">
+                            <i class="far fa-calendar"></i> <span>${formatDate(note.date)}</span>
+                        </div>
+                        ${folderInfo}
                     </div>
                 </div>
                 `;
             }).join('');
-            
+
             // Add click event to note items
             document.querySelectorAll('#home-notes-list .note-item').forEach(item => {
                 item.addEventListener('click', () => {
@@ -1488,7 +1802,7 @@
         // Render folders
         function renderFolders() {
             const foldersGrid = document.getElementById('folders-grid');
-            
+
             foldersGrid.innerHTML = folders.map(folder => {
                 const noteCount = notes.filter(note => note.folderId === folder.id).length;
                 return `
@@ -1501,7 +1815,7 @@
                 </div>
                 `;
             }).join('');
-            
+
             // Add new folder button with icon picker
             const addFolderBtn = document.createElement('div');
             addFolderBtn.className = 'folder-item';
@@ -1523,7 +1837,7 @@
         function renderFolderNotes(folderId) {
             const folderNotesList = document.getElementById('folder-notes-list');
             const folderNotes = notes.filter(note => note.folderId === folderId);
-            
+
             if (folderNotes.length === 0) {
                 folderNotesList.innerHTML = `
                     <div class="empty-state">
@@ -1534,22 +1848,24 @@
                 `;
                 return;
             }
-            
+
             // Sort notes by update date (newest first)
             folderNotes.sort((a, b) => new Date(b.updated) - new Date(a.updated));
-            
+
             folderNotesList.innerHTML = folderNotes.map(note => `
                 <div class="note-item" data-note-id="${note.id}" tabindex="0" role="button" aria-label="View note: ${note.title}">
                     <div class="note-title">
                         <i class="fas fa-sticky-note"></i> ${note.title}
                     </div>
                     <div class="note-preview">${note.content.substring(0, 100)}${note.content.length > 100 ? '...' : ''}</div>
-                    <div class="note-date">
-                        <i class="far fa-calendar"></i> ${formatDate(note.date)}
+                    <div class="note-meta">
+                        <div class="note-date">
+                            <i class="far fa-calendar"></i> <span>${formatDate(note.date)}</span>
+                        </div>
                     </div>
                 </div>
             `).join('');
-            
+
             // Add click event to note items
             document.querySelectorAll('#folder-notes-list .note-item').forEach(item => {
                 item.addEventListener('click', () => {
@@ -1569,13 +1885,45 @@
         function handleFolderClick(e) {
             const folderItem = e.target.closest('.folder-item');
             if (!folderItem) return;
-            
+
             if (folderItem.id === 'add-folder-btn') {
                 // Handled in renderFolders function
                 return;
             } else {
                 const folderId = parseInt(folderItem.getAttribute('data-folder-id'));
                 showFolderNotes(folderId);
+            }
+        }
+
+        // Handle delete folder
+        function handleDeleteFolder() {
+            if (!currentFolderId) return;
+
+            const folder = folders.find(f => f.id === currentFolderId);
+            if (!folder) return;
+
+            if (confirm(`Are you sure you want to delete the folder "${folder.name}"? All notes in this folder will be moved to "No Folder".`)) {
+                // Move all notes from this folder to "No Folder"
+                notes.forEach(note => {
+                    if (note.folderId === currentFolderId) {
+                        note.folderId = null;
+                    }
+                });
+
+                // Remove the folder
+                folders = folders.filter(f => f.id !== currentFolderId);
+
+                // Update storage
+                localStorage.setItem('noteSpaceNotes', JSON.stringify(notes));
+                localStorage.setItem('noteSpaceFolders', JSON.stringify(folders));
+
+                // Update UI
+                updateFolderNoteCounts();
+                renderFolders();
+                renderFolderCards();
+
+                showToast('Folder deleted successfully!');
+                showPage('folders');
             }
         }
 
@@ -1599,9 +1947,9 @@
                 notes = notes.filter(note => note.id !== currentNoteId);
                 localStorage.setItem('noteSpaceNotes', JSON.stringify(notes));
                 updateFolderNoteCounts();
-                
+
                 showToast('Note deleted successfully!');
-                
+
                 if (currentFolderId) {
                     showFolderNotes(currentFolderId);
                 } else {
@@ -1614,13 +1962,13 @@
         function handleMoveNote() {
             const note = notes.find(n => n.id === currentNoteId);
             if (!note) return;
-            
+
             let folderOptions = 'Select a folder:\n';
             folderOptions += '0. No Folder\n';
             folders.forEach((folder, index) => {
                 folderOptions += `${index + 1}. ${folder.name}\n`;
             });
-            
+
             const selection = prompt(folderOptions);
             if (selection !== null) {
                 const selectedIndex = parseInt(selection);
@@ -1629,14 +1977,14 @@
                 } else if (selectedIndex > 0 && selectedIndex <= folders.length) {
                     note.folderId = folders[selectedIndex - 1].id;
                 }
-                
+
                 if (!isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex <= folders.length) {
                     note.updated = new Date().toISOString();
                     localStorage.setItem('noteSpaceNotes', JSON.stringify(notes));
                     updateFolderNoteCounts();
-                    
+
                     showToast('Note moved successfully!');
-                    
+
                     if (currentFolderId) {
                         showFolderNotes(currentFolderId);
                     } else {
@@ -1661,19 +2009,19 @@
         function handleSaveNote() {
             const title = document.getElementById('note-title').value.trim();
             const content = document.getElementById('note-content').value;
-            
+
             if (!title) {
                 alert('Please enter a title for your note.');
                 return;
             }
-            
+
             if (content.length > 10000) {
                 alert('Note content exceeds the 10,000 character limit.');
                 return;
             }
-            
+
             const now = new Date().toISOString();
-            
+
             if (currentNoteId) {
                 // Update existing note
                 const noteIndex = notes.findIndex(n => n.id === currentNoteId);
@@ -1694,14 +2042,14 @@
                     date: now.split('T')[0],
                     updated: now
                 };
-                
+
                 notes.push(newNote);
                 showToast('Note created successfully!');
             }
-            
+
             localStorage.setItem('noteSpaceNotes', JSON.stringify(notes));
             updateFolderNoteCounts();
-            
+
             if (currentFolderId) {
                 showFolderNotes(currentFolderId);
             } else {
@@ -1715,7 +2063,7 @@
             const charCount = content.length;
             const wordCountElement = document.getElementById('word-count');
             wordCountElement.textContent = `${charCount}/10000 characters`;
-            
+
             if (charCount > 9500) {
                 wordCountElement.classList.add('warning');
             } else {
@@ -1733,7 +2081,7 @@
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add('show');
-            
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
@@ -1743,4 +2091,5 @@
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
+
 </html>
